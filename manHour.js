@@ -13,25 +13,28 @@ var rowEnd = 24;
 // Attandence sheet
 var attandenceSheet = SpreadsheetApp.openById('1dpdU3CgIamunwLS_Opv5zrNCVypE6AEAn80iZXbRMic').getSheets()[0];
 
+//Punch Card sheet
+var punchCardSheet = SpreadsheetApp.openById('1d3jLeX_FcNEEq_bQvcK7LRKQnq01-8hKHH5JSR_HH5k');
+
 // Drop List sheet @param string[][]
 var dropList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("List").getDataRange().getValues();
 
 // Hash map for main drop list
-var hash = {
+var dropListHash = {
     labels: {},
     init: function() {
         for (var i = 1; i < dropList.length; i++) {
-            hash.labels[dropList[i][0]] = i;
+            dropListHash.labels[dropList[i][0]] = i;
         }
 
         // Test to check hash tabel
-        for (var key in hash.labels) {
-            Logger.log("key: %s, value: %s", key, hash.labels[key]);
+        for (var key in dropListHash.labels) {
+            Logger.log("key: %s, value: %s", key, dropListHash.labels[key]);
         }
 
     }
 };
-hash.init();
+dropListHash.init();
 
 /* Flag cells, condination is (row, col)
 * OK to submit flag: H8 (8,8)
@@ -54,7 +57,10 @@ function submit() {
     status = sheet.getRange("I15").getValue(); // OK to submit flag: I15
     if (status == 'NG') {
         ui.alert('記入内容を修正してください。');
-    } else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
+    }else if(! dateNotChecked(getCurrentUser(),sheet.getRange().getValue())){
+        ui.alter('この日はすでに記録があります。日付をチェックしてください。')
+    }
+    else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
         insertNewRecords(sheet);
     }
 }
@@ -78,9 +84,36 @@ function insertNewRecords(sourceSheet) {
     // Append items to attendance sheet
     var attendData = sourceSheet.getRange(attendRange).getValues();
     attandenceSheet.appendRow([userName].concat(attendData[0]));
+    // Add records in punch card
+    punchCard(userName, inputDate);
     SpreadsheetApp.getUi().alert('登録完了');
 }
 
+/**
+ * Check duplication insertion
+ */
+ function dateNotChecked(user, date){
+     var day = dayOfYear(date);
+     var offset = 2;
+     var userHash = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
+     return punchCardSheet.getSheetByName().getRange(day+offset,userHash[]).isBlank();
+ }
+ 
+ // Mark date for user in Punch card
+ function punchCard(user, date) {
+     
+ }
+ 
+ // Day of year
+ function dayOfYear(date) {
+     if(!(date instanceof Date)){
+         return 0;
+     }
+     var start = new Date(date.getFullYear(),0,0);
+     var diff = date - start;
+     var oneDay = 86400000; // (1000*60*60*24)
+     return Math.floor(diff/oneDay);
+ }
 /**
  * Clear Current Table
  */
@@ -118,11 +151,11 @@ function onEdit(e) {
     // When main class is selected
     var cell = e.range.getSheet().getRange(row, col + 1);
     if (row <= rowEnd && row >= rowStart && col == 3) { // set sub class items
-        var rule = SpreadsheetApp.newDataValidation().requireValueInList(dropList[hash.labels[e.value]].slice(1), true).build();
+        var rule = SpreadsheetApp.newDataValidation().requireValueInList(dropList[dropListHash.labels[e.value]].slice(1), true).build();
         cell.setDataValidation(rule);
         // Set phase items
         cell = e.source.getActiveSheet().getRange(row, col + 2);
-        if (hash.labels[e.value] != dropList.length - 2) {
+        if (dropListHash.labels[e.value] != dropList.length - 2) {
             cell.clearDataValidations();
             cell.setValue("-");
         } else {
@@ -165,5 +198,6 @@ function include(filename) {
 }
 
 function nipp() {
-
+    var a = new String();
+    console.log(typeof a);
 }
