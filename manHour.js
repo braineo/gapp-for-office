@@ -52,15 +52,15 @@ function getCurrentUser() {
  * Check if it is ready to submit
  */
 function submit() {
-    sheet = SpreadsheetApp.getActiveSheet();
+    var sheet = SpreadsheetApp.getActiveSheet();
     var ui = SpreadsheetApp.getUi();
-    status = sheet.getRange("I15").getValue(); // OK to submit flag: I15
+    var row = dayOfYear(sheet.getRange("I2").getValue());
+    var status = sheet.getRange("I15").getValue(); // OK to submit flag: I15
     if (status == 'NG') {
-        ui.alert('記入内容を修正してください。');
-    }else if(! dateNotChecked(getCurrentUser(),sheet.getRange().getValue())){
+        ui.alert('記入内容を修正してください。')
+    } else if (!dateNotChecked(getCurrentUser(), row)) { // Cell I2 is Date
         ui.alter('この日はすでに記録があります。日付をチェックしてください。')
-    }
-    else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
+    } else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
         insertNewRecords(sheet);
     }
 }
@@ -92,28 +92,36 @@ function insertNewRecords(sourceSheet) {
 /**
  * Check duplication insertion
  */
- function dateNotChecked(user, date){
-     var day = dayOfYear(date);
-     var offset = 2;
-     var userHash = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
-     return punchCardSheet.getSheetByName().getRange(day+offset,userHash[]).isBlank();
- }
- 
- // Mark date for user in Punch card
- function punchCard(user, date) {
-     
- }
- 
- // Day of year
- function dayOfYear(date) {
-     if(!(date instanceof Date)){
-         return 0;
-     }
-     var start = new Date(date.getFullYear(),0,0);
-     var diff = date - start;
-     var oneDay = 86400000; // (1000*60*60*24)
-     return Math.floor(diff/oneDay);
- }
+function dateNotChecked(user, row) {
+    if ((user instanceof String) && (row instanceof Number)) {
+        var offset = 1;
+        var userTable = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
+        var col = -1;
+        for(var i=0; i<userTable.length;i++){
+            if(user == userTable[i][0]){
+                col = i+3;
+            }
+        }
+        return punchCardSheet.getSheetByName().getRange(row + offset, col).isBlank();
+    }
+}
+
+// Mark date for user in Punch card
+function punchCard(user, date) {
+    
+}
+
+// Day of year
+function dayOfYear(date) {
+    if (!(date instanceof Date)) {
+        return 0;
+    }
+    var start = new Date(date.getFullYear(), 0, 0);
+    var diff = date - start;
+    var oneDay = 86400000; // (1000*60*60*24)
+    return Math.floor(diff / oneDay);
+}
+
 /**
  * Clear Current Table
  */
