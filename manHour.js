@@ -22,7 +22,7 @@ var dropList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("List").getD
 // Hash map for main drop list
 var dropListHash = {
     labels: {},
-    init: function() {
+    init: function () {
         for (var i = 1; i < dropList.length; i++) {
             dropListHash.labels[dropList[i][0]] = i;
         }
@@ -58,7 +58,7 @@ function submit() {
     var status = sheet.getRange("I15").getValue(); // OK to submit flag: I15
     if (status == 'NG') {
         ui.alert('記入内容を修正してください。')
-    } else if (!dateNotChecked(getCurrentUser(), row)) { // Cell I2 is Date
+    } else if (!punchCard(getCurrentUser(), row)) { // Cell I2 is Date
         ui.alter('この日はすでに記録があります。日付をチェックしてください。')
     } else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
         insertNewRecords(sheet);
@@ -73,7 +73,6 @@ function insertNewRecords(sourceSheet) {
     var content = sourceSheet.getRange(recordRange).getValues();
     var userName = getCurrentUser();
     var inputDate = sourceSheet.getRange(inputDateCell).getValue();
-    Logger.log(content);
     for (var i = 0; i < content.length; i++) {
         if (content[i][0] == "OK") { // Record is Ok to submit flag:
             Logger.log(content[i][content[i].length - 1])
@@ -83,6 +82,7 @@ function insertNewRecords(sourceSheet) {
     }
     // Append items to attendance sheet
     var attendData = sourceSheet.getRange(attendRange).getValues();
+    attendData[0][attendData[0].length - 1] = timeStringToFloat(attendData[0][attendData[0].length - 1]);
     attandenceSheet.appendRow([userName].concat(attendData[0]));
     // Add records in punch card
     punchCard(userName, inputDate);
@@ -90,26 +90,40 @@ function insertNewRecords(sourceSheet) {
 }
 
 /**
- * Check duplication insertion
+ * Check duplication insertion, if not, punch card and send ok to proceed submit
  */
-function dateNotChecked(user, row) {
+function punchCard(user, row) {
     if ((user instanceof String) && (row instanceof Number)) {
         var offset = 1;
         var userTable = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
+        // Find out col number
         var col = -1;
-        for(var i=0; i<userTable.length;i++){
-            if(user == userTable[i][0]){
-                col = i+3;
+        for (var i = 0; i < userTable.length; i++) {
+            if (user == userTable[i][0]) {
+                col = i + 3;
+                break;
             }
         }
-        return punchCardSheet.getSheetByName().getRange(row + offset, col).isBlank();
+        var punchSheet = punchCardSheet.getSheetByName("Punch");
+        if (punchSheet.getRange(row, 1).isBlank) {
+            var today = new Date()
+            punchSheet.getRange(row, 1).setValue(today);
+            var weekDay = {1:'月', 2:'火', 3:'水', 4:'木', 5:'金', 6:'土', 7:'日'};
+            punchSheet.getRange(row, 2).setValue(weekDay[today.getDay()]);
+        }
+        // Punch
+       
+        if (punchSheet.getRange(row + offset, col).isBlank()) {
+            punchSheet.getRange(row + offset, col).setValue(1);
+            punchSheet.getRange(row + offset, col).setBackground("green");
+        }
+        else{
+            return false;
+        }
+        return true;
     }
 }
 
-// Mark date for user in Punch card
-function punchCard(user, date) {
-    
-}
 
 // Day of year
 function dayOfYear(date) {
@@ -153,7 +167,7 @@ function onEdit(e) {
     var col = e.range.getColumn();
     Logger.log(e.range.getRow());
     if (e.range.getHeight() > 1) {
-        return void(0);
+        return void (0);
         Logger.log(e.range.getHeight());
     }
     // When main class is selected
@@ -173,6 +187,8 @@ function onEdit(e) {
     }
 }
 
+
+// Covert 2:30 time to 2.5 format
 function timeStringToFloat(time) {
     var hours = time.getHours();
     var minutes = time.getMinutes();
@@ -206,6 +222,6 @@ function include(filename) {
 }
 
 function nipp() {
-    var a = new String();
-    console.log(typeof a);
+    var a = new Date();
+    console.log(a.getDay);
 }
