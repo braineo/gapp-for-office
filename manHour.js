@@ -4,9 +4,9 @@
 
 // Database sheet
 var databaseSheet = SpreadsheetApp.openById('1jbj7zbpqvkKXF-QjLq0S3Lw21f_fBsAweKbiwE9j5Ig').getSheets()[0];
-var recordRange = "B3:F24";
-var attendRange = "K2:P2";
-var inputDateCell = "I2";
+var recordRange = "E3:I24";
+var attendRange = "K2:O2";
+var inputDateCell = "C2";
 var rowStart = 3;
 var rowEnd = 24;
 
@@ -54,12 +54,10 @@ function getCurrentUser() {
 function submit() {
     var sheet = SpreadsheetApp.getActiveSheet();
     var ui = SpreadsheetApp.getUi();
-    var row = dayOfYear(sheet.getRange("I2").getValue());
-    var status = sheet.getRange("I15").getValue(); // OK to submit flag: I15
+    var row = dayOfYear(sheet.getRange(inputDateCell).getValue()); //C2: input date
+    var status = sheet.getRange("C15").getValue(); // OK to submit flag: I15
     if (status == 'NG') {
         ui.alert('記入内容を修正してください。')
-    } else if (!punchCard(getCurrentUser(), row)) { // Cell I2 is Date
-        ui.alter('この日はすでに記録があります。日付をチェックしてください。')
     } else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
         insertNewRecords(sheet);
     }
@@ -74,54 +72,16 @@ function insertNewRecords(sourceSheet) {
     var userName = getCurrentUser();
     var inputDate = sourceSheet.getRange(inputDateCell).getValue();
     for (var i = 0; i < content.length; i++) {
-        if (content[i][0] == "OK") { // Record is Ok to submit flag:
-            Logger.log(content[i][content[i].length - 1])
-            content[i][content[i].length - 1] = timeStringToFloat(content[i][content[i].length - 1]);
-            databaseSheet.appendRow([userName, inputDate].concat(content[i].slice(1)));
+        if (content[i][content[i].length - 1] == "OK") { // Record is Ok to submit flag:
+            content[i][content[i].length - 2] = timeStringToFloat(content[i][content[i].length - 2]);
+            databaseSheet.appendRow([userName, inputDate].concat(content[i].slice(0,content[i].length - 1)));
         }
     }
     // Append items to attendance sheet
     var attendData = sourceSheet.getRange(attendRange).getValues();
     attendData[0][attendData[0].length - 1] = timeStringToFloat(attendData[0][attendData[0].length - 1]);
-    attandenceSheet.appendRow([userName].concat(attendData[0]));
-    // Add records in punch card
-    punchCard(userName, inputDate);
+    attandenceSheet.appendRow([userName,inputDate].concat(attendData[0]));
     SpreadsheetApp.getUi().alert('登録完了');
-}
-
-/**
- * Check duplication insertion, if not, punch card and send ok to proceed submit
- */
-function punchCard(user, row) {
-    if ((user instanceof String) && (row instanceof Number)) {
-        var offset = 1;
-        var userTable = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
-        // Find out col number
-        var col = -1;
-        for (var i = 0; i < userTable.length; i++) {
-            if (user == userTable[i][0]) {
-                col = i + 3;
-                break;
-            }
-        }
-        var punchSheet = punchCardSheet.getSheetByName("Punch");
-        if (punchSheet.getRange(row, 1).isBlank) {
-            var today = new Date()
-            punchSheet.getRange(row, 1).setValue(today);
-            var weekDay = {1:'月', 2:'火', 3:'水', 4:'木', 5:'金', 6:'土', 7:'日'};
-            punchSheet.getRange(row, 2).setValue(weekDay[today.getDay()]);
-        }
-        // Punch
-       
-        if (punchSheet.getRange(row + offset, col).isBlank()) {
-            punchSheet.getRange(row + offset, col).setValue(1);
-            punchSheet.getRange(row + offset, col).setBackground("green");
-        }
-        else{
-            return false;
-        }
-        return true;
-    }
 }
 
 
@@ -142,14 +102,14 @@ function dayOfYear(date) {
 function clearContents() {
     var sheet = SpreadsheetApp.getActiveSheet();
     //Clear input area C3, F24
-    sheet.getRange("C3:F24").clear({
+    sheet.getRange("E3:H24").clear({
         contentsOnly: true
     });
-    sheet.getRange("D3:E24").clear({
+    sheet.getRange("F3:G24").clear({
         validationsOnly: true
     });
     // Fill in default date, work time
-    sheet.getRange("I2:I6").setValues([
+    sheet.getRange("C2:C6").setValues([
         [new Date()],
         ["9:00"],
         ["17:45"],
@@ -165,14 +125,12 @@ function clearContents() {
 function onEdit(e) {
     var row = e.range.getRow();
     var col = e.range.getColumn();
-    Logger.log(e.range.getRow());
     if (e.range.getHeight() > 1) {
         return void (0);
-        Logger.log(e.range.getHeight());
     }
     // When main class is selected
     var cell = e.range.getSheet().getRange(row, col + 1);
-    if (row <= rowEnd && row >= rowStart && col == 3) { // set sub class items
+    if (row <= rowEnd && row >= rowStart && col == 5) { // set sub class items
         var rule = SpreadsheetApp.newDataValidation().requireValueInList(dropList[dropListHash.labels[e.value]].slice(1), true).build();
         cell.setDataValidation(rule);
         // Set phase items
