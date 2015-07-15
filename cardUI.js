@@ -42,5 +42,5 @@ function markMiss(sheet, row) {
 function onOpen(e){
     var row = dayOfYear(new Date());
     var punchCardSheet = SpreadsheetApp.openById('1d3jLeX_FcNEEq_bQvcK7LRKQnq01-8hKHH5JSR_HH5k').getSheetByName("Punch");
-    SpreadsheetApp.setActiveRange(punchCardSheet.getRange(row, 1));
+    SpreadsheetApp.setActiveRange(punchCardSheet.getRange(row + 10, 1)); //Move activate cell to recent date
 } 
