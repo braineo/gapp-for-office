@@ -26,12 +26,6 @@ var dropListHash = {
         for (var i = 1; i < dropList.length; i++) {
             dropListHash.labels[dropList[i][0]] = i;
         }
-
-        // Test to check hash tabel
-        for (var key in dropListHash.labels) {
-            Logger.log("key: %s, value: %s", key, dropListHash.labels[key]);
-        }
-
     }
 };
 dropListHash.init();
