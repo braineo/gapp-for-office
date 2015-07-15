@@ -26,12 +26,6 @@ var dropListHash = {
         for (var i = 1; i < dropList.length; i++) {
             dropListHash.labels[dropList[i][0]] = i;
         }
-
-        // Test to check hash tabel
-        for (var key in dropListHash.labels) {
-            Logger.log("key: %s, value: %s", key, dropListHash.labels[key]);
-        }
-
     }
 };
 dropListHash.init();
@@ -55,9 +49,12 @@ function submit() {
     var sheet = SpreadsheetApp.getActiveSheet();
     var ui = SpreadsheetApp.getUi();
     var row = dayOfYear(sheet.getRange(inputDateCell).getValue()); //C2: input date
-    var status = sheet.getRange("C15").getValue(); // OK to submit flag: I15
+
+    var status = sheet.getRange("C15").getValue(); // OK to submit flag: C15
     if (status == 'NG') {
-        ui.alert('記入内容を修正してください。')
+        ui.alert('記入内容を修正してください。');
+    } else if (!punchCard(getCurrentUser(), row)) {
+        ui.alert('この日はすでに記録があります。日付をチェックしてください。');
     } else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
         insertNewRecords(sheet);
     }
@@ -74,16 +71,44 @@ function insertNewRecords(sourceSheet) {
     for (var i = 0; i < content.length; i++) {
         if (content[i][content[i].length - 1] == "OK") { // Record is Ok to submit flag:
             content[i][content[i].length - 2] = timeStringToFloat(content[i][content[i].length - 2]);
-            databaseSheet.appendRow([userName, inputDate].concat(content[i].slice(0,content[i].length - 1)));
+            databaseSheet.appendRow([userName, inputDate].concat(content[i].slice(0, content[i].length - 1)));
         }
     }
     // Append items to attendance sheet
     var attendData = sourceSheet.getRange(attendRange).getValues();
     attendData[0][attendData[0].length - 1] = timeStringToFloat(attendData[0][attendData[0].length - 1]);
-    attandenceSheet.appendRow([userName,inputDate].concat(attendData[0]));
+    attandenceSheet.appendRow([userName, inputDate].concat(attendData[0]));
+    // Add records in punch card
+    punchCard(userName, dayOfYear(inputDate));
     SpreadsheetApp.getUi().alert('登録完了');
 }
 
+/**
+ * Check duplication insertion, if not, punch card and send ok to proceed submit
+ */
+function punchCard(user, row) {
+    var offset = 2;
+    var userTable = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
+    // Find out col number
+    var col = -1;
+    for (var i = 0; i < userTable.length; i++) {
+        if (user == userTable[i][0]) {
+            col = i + 3;
+            break;
+        }
+    }
+
+    var punchSheet = punchCardSheet.getSheetByName("Punch");
+    // Punch
+    if (punchSheet.getRange(row + offset, col).isBlank()) {
+        punchSheet.getRange(row + offset, col).setValue(1);
+        punchSheet.getRange(row + offset, col).setBackground("green");
+    }
+    else {
+        return false;
+    }
+    return true;
+}
 
 // Day of year
 function dayOfYear(date) {
@@ -101,7 +126,7 @@ function dayOfYear(date) {
  */
 function clearContents() {
     var sheet = SpreadsheetApp.getActiveSheet();
-    //Clear input area C3, F24
+    //Clear input area E3, H24
     sheet.getRange("E3:H24").clear({
         contentsOnly: true
     });
@@ -180,6 +205,6 @@ function include(filename) {
 }
 
 function nipp() {
-    var a = new Date();
-    console.log(a.getDay);
+    var sheet = SpreadsheetApp.getActiveSheet();
+    insertNewRecords(sheet);
 }
