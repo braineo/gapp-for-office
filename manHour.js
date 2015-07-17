@@ -6,7 +6,11 @@
 var databaseSheet = SpreadsheetApp.openById('1jbj7zbpqvkKXF-QjLq0S3Lw21f_fBsAweKbiwE9j5Ig').getSheets()[0];
 var recordRange = "E3:I24";
 var attendRange = "K2:O2";
+var contentClearRange = "E3:H24";
+var dataValiClearRange = "F3:G24";
 var inputDateCell = "C2";
+var attendanceInputRange = "C2:C6";
+var okToSubmit = "C15";
 var rowStart = 3;
 var rowEnd = 24;
 
@@ -22,7 +26,7 @@ var dropList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("List").getD
 // Hash map for main drop list
 var dropListHash = {
     labels: {},
-    init: function () {
+    init: function() {
         for (var i = 1; i < dropList.length; i++) {
             dropListHash.labels[dropList[i][0]] = i;
         }
@@ -48,14 +52,13 @@ function getCurrentUser() {
 function submit() {
     var sheet = SpreadsheetApp.getActiveSheet();
     var ui = SpreadsheetApp.getUi();
-    var row = dayOfYear(sheet.getRange(inputDateCell).getValue()); //C2: input date
-
-    var status = sheet.getRange("C15").getValue(); // OK to submit flag: C15
+    var row = dayOfYear(sheet.getRange(inputDateCell).getValue()); //convert date into row number
+    var status = sheet.getRange(okToSubmit).getValue();
     if (status == 'NG') {
         ui.alert('記入内容を修正してください。');
     } else if (!punchCard(getCurrentUser(), row)) {
         ui.alert('この日はすでに記録があります。日付をチェックしてください。');
-    } else if (ui.alert("記入内容を登録するか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
+    } else if (ui.alert("記入内容を登録しますか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
         insertNewRecords(sheet);
     }
 }
@@ -103,8 +106,7 @@ function punchCard(user, row) {
     if (punchSheet.getRange(row + offset, col).isBlank()) {
         punchSheet.getRange(row + offset, col).setValue(1);
         punchSheet.getRange(row + offset, col).setBackground("green");
-    }
-    else {
+    } else {
         return false;
     }
     return true;
@@ -126,15 +128,14 @@ function dayOfYear(date) {
  */
 function clearContents() {
     var sheet = SpreadsheetApp.getActiveSheet();
-    //Clear input area E3, H24
-    sheet.getRange("E3:H24").clear({
+    sheet.getRange(contentClearRange).clear({
         contentsOnly: true
     });
-    sheet.getRange("F3:G24").clear({
+    sheet.getRange(dataValiClearRange).clear({
         validationsOnly: true
     });
     // Fill in default date, work time
-    sheet.getRange("C2:C6").setValues([
+    sheet.getRange(attendanceInputRange).setValues([
         [new Date()],
         ["9:00"],
         ["17:45"],
@@ -151,7 +152,7 @@ function onEdit(e) {
     var row = e.range.getRow();
     var col = e.range.getColumn();
     if (e.range.getHeight() > 1) {
-        return void (0);
+        return void(0);
     }
     // When main class is selected
     var cell = e.range.getSheet().getRange(row, col + 1);
