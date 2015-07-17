@@ -105,7 +105,7 @@ function punchCard(user, row) {
     // Punch
     if (punchSheet.getRange(row + offset, col).isBlank()) {
         punchSheet.getRange(row + offset, col).setValue(1);
-        punchSheet.getRange(row + offset, col).setBackground("green");
+        punchSheet.getRange(row + offset, col).setBackground("#68ed9b");
     } else {
         return false;
     }

@@ -41,7 +41,7 @@ function markMiss(sheet, row) {
     var header = sheet.getRange("1:1").getValues();
     for (var i = 3; i <= header[0].length; i++) {
         if (sheet.getRange(row, i).isBlank()) {
-            sheet.getRange(row, i).setBackground("red");
+            sheet.getRange(row, i).setBackground("#FF7791");
         }
     }
 }
