@@ -34,6 +34,18 @@ var dropListHash = {
 };
 dropListHash.init();
 
+var punchUserHash = {
+    labels: {},
+    init: function() {
+        var userList = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
+        // Find out col number
+        for (var i = 0; i < userList.length; i++) {
+            punchUserHash.labels[userList[i][0]] = i;
+        }
+    }
+};
+punchUserHash.init();
+
 /* Flag cells, condination is (row, col)
 * OK to submit flag: H8 (8,8)
 * Record is Ok flag: A4-A25 (4,1)-(25,1)
@@ -56,9 +68,11 @@ function submit() {
     var status = sheet.getRange(okToSubmit).getValue();
     if (status == 'NG') {
         ui.alert('記入内容を修正してください。');
-    } else if (!punchCard(getCurrentUser(), row)) {
+    } else if (isPunched(getCurrentUser(), row)) {
         ui.alert('この日はすでに記録があります。日付をチェックしてください。');
     } else if (ui.alert("記入内容を登録しますか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
+        // Add records in punch card
+        punchCard(getCurrentUser(), row);
         insertNewRecords(sheet);
     }
 }
@@ -81,35 +95,33 @@ function insertNewRecords(sourceSheet) {
     var attendData = sourceSheet.getRange(attendRange).getValues();
     attendData[0][attendData[0].length - 1] = timeStringToFloat(attendData[0][attendData[0].length - 1]);
     attandenceSheet.appendRow([userName, inputDate].concat(attendData[0]));
-    // Add records in punch card
-    punchCard(userName, dayOfYear(inputDate));
     SpreadsheetApp.getUi().alert('登録完了');
 }
 
 /**
  * Check duplication insertion, if not, punch card and send ok to proceed submit
  */
-function punchCard(user, row) {
+function isPunched(user, row) {
     var offset = 2;
-    var userTable = punchCardSheet.getSheetByName("Member").getDataRange().getValues();
     // Find out col number
-    var col = -1;
-    for (var i = 0; i < userTable.length; i++) {
-        if (user == userTable[i][0]) {
-            col = i + 3;
-            break;
-        }
-    }
-
+    var col = punchUserHash.labels[user] + 3;
     var punchSheet = punchCardSheet.getSheetByName("Punch");
     // Punch
     if (punchSheet.getRange(row + offset, col).isBlank()) {
-        punchSheet.getRange(row + offset, col).setValue(1);
-        punchSheet.getRange(row + offset, col).setBackground("#68ed9b");
-    } else {
         return false;
+    } else {
+        return true;
     }
-    return true;
+}
+
+function punchCard(user, row) {
+    var offset = 2;
+    // Find out col number
+    var col = punchUserHash.labels[user] + 3;
+    var punchSheet = punchCardSheet.getSheetByName("Punch");
+    // Punch
+    punchSheet.getRange(row + offset, col).setValue(1);
+    punchSheet.getRange(row + offset, col).setBackground("#68ed9b");
 }
 
 // Day of year
