@@ -161,7 +161,7 @@ function onEdit(e) {
         cell.setDataValidation(rule);
         // Set phase items
         cell = e.source.getActiveSheet().getRange(row, col + 2);
-        if (dropListHash.labels[e.value] != dropList.length - 2) {
+        if (dropListHash.labels[e.value] != 1) {
             cell.clearDataValidations();
             cell.setValue("-");
         } else {
