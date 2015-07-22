@@ -17,9 +17,12 @@ function dayOfYear(date) {
 function dayRoutine() {
     var row = dayOfYear(new Date());
     var offset = 2;
-    var punchCardSheet = SpreadsheetApp.openById('1d3jLeX_FcNEEq_bQvcK7LRKQnq01-8hKHH5JSR_HH5k').getSheetByName("Punch");
+    var sheets = SpreadsheetApp.openById('1d3jLeX_FcNEEq_bQvcK7LRKQnq01-8hKHH5JSR_HH5k');
+    var punchCardSheet = sheets.getSheetByName("Punch");
+    var memberSheet = sheets.getSheetByName("Member");
     generateDayHead(punchCardSheet, row + offset);
     markMiss(punchCardSheet, row + offset);
+    sendNotification(memberSheet, findMissing(punchCardSheet, row + offset - 1))
 }
 
 function generateDayHead(sheet, row) {
@@ -37,13 +40,31 @@ function generateDayHead(sheet, row) {
     sheet.getRange(row, 2).setValue(weekDay[today.getDay()]);
 }
 
-function markMiss(sheet, row) {
+function markRed(sheet, row) {
+    var header = sheet.getRange("1:1").getValues();
+    sheet.getRange(row, 3, row, header.length).setBackground("#FF7791");
+}
+
+function sendNotification(memberSheet, missingList) {
+    for(var i = 0; i < missingList.length; i++ ){
+        var email = memberSheet.getRange(i,1).getValue();
+        GmailApp.sendEmail(email, "工数入力の入力", "abcdefg");
+    }
+}
+
+function findMissing(sheet, row){
+    var notFilled = [];
+    // ignore when it is weekend
+    if(["土", "日"].indexOf(sheet.getRange(row, 2).getValue()) < 0){
+        return notFilled;
+    }
     var header = sheet.getRange("1:1").getValues();
     for (var i = 3; i <= header[0].length; i++) {
         if (sheet.getRange(row, i).isBlank()) {
-            sheet.getRange(row, i).setBackground("#FF7791");
+            notFilled.append(i);
         }
     }
+    return notFilled;
 }
 
 function onOpen(e) {
