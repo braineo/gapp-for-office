@@ -21,8 +21,8 @@ function dayRoutine() {
     var punchCardSheet = sheets.getSheetByName("Punch");
     var memberSheet = sheets.getSheetByName("Member");
     generateDayHead(punchCardSheet, row + offset);
-    markMiss(punchCardSheet, row + offset);
-    sendNotification(memberSheet, findMissing(punchCardSheet, row + offset - 1))
+    markCellColor(punchCardSheet, row + offset);
+    sendNotification();
 }
 
 function generateDayHead(sheet, row) {
@@ -40,35 +40,37 @@ function generateDayHead(sheet, row) {
     sheet.getRange(row, 2).setValue(weekDay[today.getDay()]);
 }
 
-function markRed(sheet, row) {
+function markCellColor(sheet, row) {
     var header = sheet.getRange("1:1").getValues();
-    sheet.getRange(row, 3, row, header.length).setBackground("#FF7791");
+    sheet.getRange(row, 3, row, header[0].length).setBackground("#FF7791");
+    sheet.getRange(row, 3, row, header[0].length).setValues(createValues(header[0].length, 0));
+    sheet.getRange(row, 3, row, header[0].length).setFontColor("#FF7791");
 }
 
-function sendNotification(memberSheet, missingList) {
-    for(var i = 0; i < missingList.length; i++ ){
-        var email = memberSheet.getRange(i,1).getValue();
-        GmailApp.sendEmail(email, "工数入力の入力", "abcdefg");
+function sendNotification() {
+    var today = new Date();
+    if (today.getDay() == 1) {
+        var email = "binbin.ye@g.softbank.co.jp";
+        GmailApp.sendEmail(email, "[Reminder]工数集計状況の確認", "お疲れ様です。工数集計状況を確認してください。");
     }
-}
 
-function findMissing(sheet, row){
-    var notFilled = [];
-    // ignore when it is weekend
-    if(["土", "日"].indexOf(sheet.getRange(row, 2).getValue()) < 0){
-        return notFilled;
-    }
-    var header = sheet.getRange("1:1").getValues();
-    for (var i = 3; i <= header[0].length; i++) {
-        if (sheet.getRange(row, i).isBlank()) {
-            notFilled.append(i);
-        }
-    }
-    return notFilled;
 }
 
 function onOpen(e) {
     var row = dayOfYear(new Date());
     var punchCardSheet = SpreadsheetApp.openById('1d3jLeX_FcNEEq_bQvcK7LRKQnq01-8hKHH5JSR_HH5k').getSheetByName("Punch");
     SpreadsheetApp.setActiveRange(punchCardSheet.getRange(row + 10, 1)); //Move activate cell to recent date
+}
+
+// create 2d array [[value]*length]
+function createValues(length, value) {
+    array = [
+        []
+    ];
+    for (var i = length; i < length; array[0][i] = value, i++);
+    return array;
+}
+
+function isHoliday(date) {
+
 }
