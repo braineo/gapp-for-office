@@ -64,13 +64,24 @@ function getCurrentUser() {
 function submit() {
     var sheet = SpreadsheetApp.getActiveSheet();
     var ui = SpreadsheetApp.getUi();
-    var row = dayOfYear(sheet.getRange(inputDateCell).getValue()); //convert date into row number
+    var date = sourceSheet.getRange(inputDateCell).getValue();
+    var weekDay = {
+        1: '月',
+        2: '火',
+        3: '水',
+        4: '木',
+        5: '金',
+        6: '土',
+        0: '日'
+    };
+    var row = dayOfYear(date); //convert date into row number
     var status = sheet.getRange(okToSubmit).getValue();
     if (status == 'NG') {
         ui.alert('記入内容を修正してください。');
     } else if (isPunched(getCurrentUser(), row)) {
         ui.alert('この日はすでに記録があります。日付をチェックしてください。');
-    } else if (ui.alert("記入内容を登録しますか", ui.ButtonSet.YES_NO) == ui.Button.YES) {
+    } else if (ui.alert(String(date.getMonth() + 1) + "月" + String(date.getDate()) + "日" + "(" + weekDay[date.getDay()] + ")分の記入内容を登録しますか？",
+            ui.ButtonSet.YES_NO) == ui.Button.YES) {
         // Add records in punch card
         punchCard(getCurrentUser(), row);
         insertNewRecords(sheet);
@@ -107,7 +118,7 @@ function isPunched(user, row) {
     var col = punchUserHash.labels[user] + 3;
     var punchSheet = punchCardSheet.getSheetByName("Punch");
     // Punch
-    if (punchSheet.getRange(row + offset, col).isBlank()) {
+    if (punchSheet.getRange(row + offset, col).getValue) {
         return false;
     } else {
         return true;
@@ -122,6 +133,7 @@ function punchCard(user, row) {
     // Punch
     punchSheet.getRange(row + offset, col).setValue(1);
     punchSheet.getRange(row + offset, col).setBackground("#68ed9b");
+    punchSheet.getRange(row + offset, col).setFontColor("#68ed9b");
 }
 
 // Day of year
