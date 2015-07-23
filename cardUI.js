@@ -15,18 +15,18 @@ function dayOfYear(date) {
 }
 
 function dayRoutine() {
-    var row = dayOfYear(new Date());
+    var today = new Date();
+    var row = dayOfYear(today);
     var offset = 2;
     var sheets = SpreadsheetApp.openById('1d3jLeX_FcNEEq_bQvcK7LRKQnq01-8hKHH5JSR_HH5k');
     var punchCardSheet = sheets.getSheetByName("Punch");
     var memberSheet = sheets.getSheetByName("Member");
-    generateDayHead(punchCardSheet, row + offset);
-    markCellColor(punchCardSheet, row + offset);
-    sendNotification();
+    generateDayHead(punchCardSheet, row + offset, today);
+    markCellColor(punchCardSheet, row + offset, isHoliday(today));
+    //sendNotification();
 }
 
-function generateDayHead(sheet, row) {
-    var today = new Date();
+function generateDayHead(sheet, row, today) {
     sheet.getRange(row, 1).setValue(today);
     var weekDay = {
         1: '月',
@@ -40,11 +40,18 @@ function generateDayHead(sheet, row) {
     sheet.getRange(row, 2).setValue(weekDay[today.getDay()]);
 }
 
-function markCellColor(sheet, row) {
+function markCellColor(sheet, row, holiday) {
     var header = sheet.getRange("1:1").getValues();
-    sheet.getRange(row, 3, row, header[0].length).setBackground("#FF7791");
-    sheet.getRange(row, 3, row, header[0].length).setValues(createValues(header[0].length, 0));
-    sheet.getRange(row, 3, row, header[0].length).setFontColor("#FF7791");
+    if(!holiday){
+        sheet.getRange(row, 3, row, header[0].length).setBackground("#FF7791");
+        sheet.getRange(row, 3, row, header[0].length).setValues(createValues(header[0].length, 0));
+        sheet.getRange(row, 3, row, header[0].length).setFontColor("#FF7791");
+    }
+    else{
+        sheet.getRange(row, 3, row, header[0].length).setBackground("#F6B26B");
+        sheet.getRange(row, 3, row, header[0].length).setValues(createValues(header[0].length, -1));
+        sheet.getRange(row, 3, row, header[0].length).setFontColor("#F6B26B");
+    }
 }
 
 function sendNotification() {
@@ -72,5 +79,8 @@ function createValues(length, value) {
 }
 
 function isHoliday(date) {
-
+    var calendar = CalendarApp.getCalendarById(
+        ' ja.japanese#holiday@group.v.calendar.google.com');
+    var events = calendar.getEventsForDay(date);
+    return (events.length > 0 || date.getDay() == 0 || date.getDay() == 6);
 }
