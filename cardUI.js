@@ -42,15 +42,15 @@ function generateDayHead(sheet, row, today) {
 
 function markCellColor(sheet, row, holiday) {
     var header = sheet.getRange("1:1").getValues();
-    if(!holiday){
-        sheet.getRange(row, 3, row, header[0].length).setBackground("#FF7791");
-        sheet.getRange(row, 3, row, header[0].length).setValues(createValues(header[0].length, 0));
-        sheet.getRange(row, 3, row, header[0].length).setFontColor("#FF7791");
-    }
-    else{
-        sheet.getRange(row, 3, row, header[0].length).setBackground("#F6B26B");
-        sheet.getRange(row, 3, row, header[0].length).setValues(createValues(header[0].length, -1));
-        sheet.getRange(row, 3, row, header[0].length).setFontColor("#F6B26B");
+    var len = header[0].length - 2;
+    if (!holiday) {
+        sheet.getRange(row, 3, 1, len).setBackground("#FF7791");
+        sheet.getRange(row, 3, 1, len).setValues(createValues(len, 0));
+        sheet.getRange(row, 3, 1, len).setFontColor("#FF7791");
+    } else {
+        sheet.getRange(row, 3, 1, len).setBackground("#F6B26B");
+        sheet.getRange(row, 3, 1, len).setValues(createValues(len, -1));
+        sheet.getRange(row, 3, 1, len).setFontColor("#F6B26B");
     }
 }
 
@@ -74,13 +74,13 @@ function createValues(length, value) {
     array = [
         []
     ];
-    for (var i = length; i < length; array[0][i] = value, i++);
+    for (var i = 0; i < length; array[0][i] = value, i++);
     return array;
 }
 
 function isHoliday(date) {
     var calendar = CalendarApp.getCalendarById(
-        ' ja.japanese#holiday@group.v.calendar.google.com');
+        'ja.japanese#holiday@group.v.calendar.google.com');
     var events = calendar.getEventsForDay(date);
     return (events.length > 0 || date.getDay() == 0 || date.getDay() == 6);
 }
