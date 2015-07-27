@@ -64,7 +64,7 @@ function getCurrentUser() {
 function submit() {
     var sheet = SpreadsheetApp.getActiveSheet();
     var ui = SpreadsheetApp.getUi();
-    var date = sourceSheet.getRange(inputDateCell).getValue();
+    var date = sheet.getRange(inputDateCell).getValue();
     var weekDay = {
         1: '月',
         2: '火',
@@ -117,8 +117,8 @@ function isPunched(user, row) {
     // Find out col number
     var col = punchUserHash.labels[user] + 3;
     var punchSheet = punchCardSheet.getSheetByName("Punch");
-    // Punch
-    if (punchSheet.getRange(row + offset, col).getValue) {
+    // Punch: 1:punched, 0:not punched, -1:holiday
+    if (punchSheet.getRange(row + offset, col).getValue() != 1) {
         return false;
     } else {
         return true;
@@ -179,7 +179,10 @@ function onEdit(e) {
         return void(0);
     }
     if (e.value === undefined) {
-        e.range.getSheet().getRange(row, col + 1, 1, 2).clear();
+        e.range.getSheet().getRange(row, col + 1, 1, 2).clear({
+            contentsOnly: true,
+            validationsOnly: true
+        });
     } else {
         // When main class is selected
         var cell = e.range.getSheet().getRange(row, col + 1);
