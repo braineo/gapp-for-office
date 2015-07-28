@@ -59,7 +59,7 @@ function getCurrentUser() {
 }
 
 /**
- * Check if it is ready to submit
+ * When submit is pressed
  */
 function submit() {
     var sheet = SpreadsheetApp.getActiveSheet();
@@ -203,7 +203,7 @@ function onEdit(e) {
 }
 
 
-// Covert 2:30 time to 2.5 format
+// Covert time string to decimal format: 2:30->2.50
 function timeStringToFloat(time) {
     var hours = time.getHours();
     var minutes = time.getMinutes();

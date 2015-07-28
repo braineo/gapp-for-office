@@ -60,7 +60,6 @@ function sendNotification() {
         var email = "binbin.ye@g.softbank.co.jp";
         GmailApp.sendEmail(email, "[Reminder]工数集計状況の確認", "お疲れ様です。工数集計状況を確認してください。");
     }
-
 }
 
 function onOpen(e) {
