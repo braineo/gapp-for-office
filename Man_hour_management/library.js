@@ -43,6 +43,12 @@ var punchUserHash = {
 };
 punchUserHash.init();
 
+var notOnEditSheet = {
+    "Punch": true,
+    "Droplist": true,
+    "List": true,
+    "Member": true
+};
 
 // retrieve user data
 function getCurrentUser() {
@@ -81,6 +87,15 @@ function timeStringToFloat(time) {
     var hours = time.getHours();
     var minutes = time.getMinutes();
     return hours + minutes / 60;
+}
+
+// create 2d array [[value]*length]
+function createValues(length, value) {
+    array = [
+        []
+    ];
+    for (var i = 0; i < length; array[0][i] = value, i++);
+    return array;
 }
 
 function include(filename) {

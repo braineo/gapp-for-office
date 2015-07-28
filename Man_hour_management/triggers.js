@@ -31,7 +31,7 @@ function onOpen(e) {
 function onEdit(e) {
     var row = e.range.getRow();
     var col = e.range.getColumn();
-    if (e.range.getHeight() > 1) {
+    if (e.range.getHeight() > 1  || (e.range.getSheet().getName() in notOnEditSheet)) {
         return void(0);
     }
     if (e.value === undefined) {
@@ -57,4 +57,3 @@ function onEdit(e) {
         }
     }
 }
-
