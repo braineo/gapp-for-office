@@ -31,28 +31,30 @@ function onOpen(e) {
 function onEdit(e) {
     var row = e.range.getRow();
     var col = e.range.getColumn();
-    if (e.range.getHeight() > 1  || (e.range.getSheet().getName() in notOnEditSheet)) {
+    if (e.range.getHeight() > 1 || (e.range.getSheet().getName() in notOnEditSheet)) {
         return void(0);
     }
-    if (e.value === undefined) {
-        e.range.getSheet().getRange(row, col + 1, 1, 2).clear({
-            contentsOnly: true,
-            validationsOnly: true
-        });
-    } else {
-        // When main class is selected
-        var cell = e.range.getSheet().getRange(row, col + 1);
-        if (row <= rowEnd && row >= rowStart && col == 5) { // set sub class items
-            var rule = SpreadsheetApp.newDataValidation().requireValueInList(dropList[dropListHash.labels[e.value]].slice(1), true).build();
-            cell.setDataValidation(rule);
-            // Set phase items
-            cell = e.source.getActiveSheet().getRange(row, col + 2);
-            if (dropListHash.labels[e.value] != 1) {
-                cell.clearDataValidations();
-                cell.setValue("-");
-            } else {
-                var rule = SpreadsheetApp.newDataValidation().requireValueInList(dropList[dropList.length - 1].slice(1), true).build();
+    if (row <= rowEnd && row >= rowStart && col == 5) {
+        if (e.value === undefined) {
+            e.range.getSheet().getRange(row, col + 1, 1, 2).clear({
+                contentsOnly: true,
+                validationsOnly: true
+            });
+        } else {
+            // When main class is selected
+            var cell = e.range.getSheet().getRange(row, col + 1);
+            if (row <= rowEnd && row >= rowStart && col == 5) { // set sub class items
+                var rule = SpreadsheetApp.newDataValidation().requireValueInList(dropList[dropListHash.labels[e.value]].slice(1), true).build();
                 cell.setDataValidation(rule);
+                // Set phase items
+                cell = e.source.getActiveSheet().getRange(row, col + 2);
+                if (dropListHash.labels[e.value] != 1) {
+                    cell.clearDataValidations();
+                    cell.setValue("-");
+                } else {
+                    var rule = SpreadsheetApp.newDataValidation().requireValueInList(dropList[dropList.length - 1].slice(1), true).build();
+                    cell.setDataValidation(rule);
+                }
             }
         }
     }
