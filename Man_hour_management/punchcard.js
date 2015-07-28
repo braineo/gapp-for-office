@@ -25,7 +25,7 @@ function isHoliday(date) {
 // Create day header. e.g. 2015/7/27 MON
 function generateDayHead(sheet, row, today) {
     sheet.getRange(row, 1).setValue(today);
-    sheet.getRange(row, 2).setValue(getWeekDay[today.getDay()]);
+    sheet.getRange(row, 2).setValue(getWeekDay(today.getDay()));
 }
 
 // Send notification to remind Admin to check out the fill-in status
