@@ -8,7 +8,6 @@ function dayRoutine() {
     var memberSheet = sheets.getSheetByName("Member");
     generateDayHead(punchCardSheet, row + offset, today);
     markCellColor(punchCardSheet, row + offset, isHoliday(today));
-    sendNotification();
 }
 
 // When document is opened, jump to a row for today

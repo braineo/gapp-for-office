@@ -27,12 +27,3 @@ function generateDayHead(sheet, row, today) {
     sheet.getRange(row, 1).setValue(today);
     sheet.getRange(row, 2).setValue(getWeekDay(today.getDay()));
 }
-
-// Send notification to remind Admin to check out the fill-in status
-function sendNotification() {
-    var today = new Date();
-    if (today.getDay() == 1) {
-        var email = "binbin.ye@g.softbank.co.jp";
-        GmailApp.sendEmail(email, "[自動配信]工数集計状況の確認", "お疲れ様です。工数集計状況を確認してください。");
-    }
-}
