@@ -4,13 +4,13 @@ function markCellColor(sheet, row, holiday) {
     var header = sheet.getRange("1:1").getValues();
     var len = header[0].length - 2;
     if (!holiday) {
-        sheet.getRange(row, 3, 1, len).setBackground("#FF7791");
+        sheet.getRange(row, 3, 1, len).setBackground("#FF0000");
         sheet.getRange(row, 3, 1, len).setValues(createValues(len, 0));
-        sheet.getRange(row, 3, 1, len).setFontColor("#FF7791");
+        sheet.getRange(row, 3, 1, len).setFontColor("#FF0000");
     } else {
-        sheet.getRange(row, 3, 1, len).setBackground("#F6B26B");
+        sheet.getRange(row, 3, 1, len).setBackground("#CCCCCC");
         sheet.getRange(row, 3, 1, len).setValues(createValues(len, -1));
-        sheet.getRange(row, 3, 1, len).setFontColor("#F6B26B");
+        sheet.getRange(row, 3, 1, len).setFontColor("#CCCCCC");
     }
 }
 
@@ -33,6 +33,6 @@ function sendNotification() {
     var today = new Date();
     if (today.getDay() == 1) {
         var email = "binbin.ye@g.softbank.co.jp";
-        GmailApp.sendEmail(email, "[Reminder]工数集計状況の確認", "お疲れ様です。工数集計状況を確認してください。");
+        GmailApp.sendEmail(email, "[自動配信]工数集計状況の確認", "お疲れ様です。工数集計状況を確認してください。");
     }
 }
