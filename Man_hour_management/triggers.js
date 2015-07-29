@@ -4,17 +4,17 @@ function dayRoutine() {
     var row = dayOfYear(today);
     var offset = 2;
     var sheets = inputSheets;
-    var punchCardSheet = sheets.getSheetByName("Punch");
+    var punchCardSheet = sheets.getSheetByName("登録状況一覧");
     var memberSheet = sheets.getSheetByName("Member");
     generateDayHead(punchCardSheet, row + offset, today);
     markCellColor(punchCardSheet, row + offset, isHoliday(today));
-    //sendNotification();
+    sendNotification();
 }
 
 // When document is opened, jump to a row for today
 function jumpToToday(e) {
     var row = dayOfYear(new Date());
-    var punchCardSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Punch");
+    var punchCardSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("登録状況一覧");
     SpreadsheetApp.setActiveRange(punchCardSheet.getRange(row, 1)); //Move activate cell to recent date
 }
 

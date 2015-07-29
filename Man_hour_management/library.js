@@ -44,7 +44,7 @@ var punchUserHash = {
 punchUserHash.init();
 
 var notOnEditSheet = {
-    "Punch": true,
+    "登録状況一覧": true,
     "Droplist": true,
     "List": true,
     "Member": true
