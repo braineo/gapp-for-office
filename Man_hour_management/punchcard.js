@@ -21,7 +21,6 @@ function isHoliday(date) {
     return (events.length > 0 || date.getDay() == 0 || date.getDay() == 6);
 }
 
-
 // Create day header. e.g. 2015/7/27 MON
 function generateDayHead(sheet, row, today) {
     sheet.getRange(row, 1).setValue(today);
