@@ -10,14 +10,6 @@ function dayRoutine() {
     markCellColor(punchCardSheet, row + offset, isHoliday(today));
 }
 
-// When document is opened, jump to a row for today
-function jumpToToday(e) {
-    var row = dayOfYear(new Date());
-    var punchCardSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("登録状況一覧");
-    SpreadsheetApp.setActiveRange(punchCardSheet.getRange(row, 1)); //Move activate cell to recent date
-}
-
-
 function onOpen(e) {
     SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
         .createMenu('Custom Menu')

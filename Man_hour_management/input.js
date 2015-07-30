@@ -90,3 +90,11 @@ function clearContents() {
         ["No"]
     ]);
 }
+
+// Jump to a row for today
+function jumpToToday() {
+    var row = dayOfYear(new Date());
+    var punchCardSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("登録状況一覧");
+    punchCardSheet.activate();
+    SpreadsheetApp.setActiveRange(punchCardSheet.getRange(row + 2, 1)); //Move activate cell to recent date
+}
