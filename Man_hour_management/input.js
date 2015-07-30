@@ -9,6 +9,9 @@ function showSidebar() {
 // Submit is pressed
 function submit() {
     var sheet = SpreadsheetApp.getActiveSheet();
+    if (notSafeToEdit(sheet)) {
+        return void(0);
+    }
     var ui = SpreadsheetApp.getUi();
     var date = sheet.getRange(inputDateCell).getValue();
     var row = dayOfYear(date); //convert date into row number
@@ -17,11 +20,8 @@ function submit() {
         ui.alert('記入内容を修正してください。');
     } else if (isPunched(getCurrentUser(), row)) {
         ui.alert('この日付は既に登録済みです。日付を再確認してください。');
-    } else if (ui.alert(String(date.getMonth() + 1) + "月" 
-                + String(date.getDate()) + "日" 
-                + "(" + getWeekDay(date.getDay()) 
-                + ")分の記入内容を登録しますか？",
-                ui.ButtonSet.YES_NO) == ui.Button.YES) {
+    } else if (ui.alert(String(date.getMonth() + 1) + "月" + String(date.getDate()) + "日" + "(" + getWeekDay(date.getDay()) + ")分の記入内容を登録しますか？",
+            ui.ButtonSet.YES_NO) == ui.Button.YES) {
         // Add records in punch card
         punchCard(getCurrentUser(), row);
         insertNewRecords(sheet);
@@ -75,6 +75,9 @@ function punchCard(user, row) {
 // clear input content and set default content
 function clearContents() {
     var sheet = SpreadsheetApp.getActiveSheet();
+    if (notSafeToEdit(sheet)) {
+        return void(0);
+    }
     sheet.getRange(contentClearRange).clear({
         contentsOnly: true
     });
@@ -83,10 +86,27 @@ function clearContents() {
     });
     // Fill in default date, work time
     sheet.getRange(attendanceInputRange).setValues([
-        [new Date()],
+        [new Date(new Date.setHours(0,0,0,0))],
         ["9:00"],
         ["17:45"],
         ["1:00"],
         ["No"]
     ]);
+}
+
+// Set date today
+function setDateToday() {
+    var sheet = SpreadsheetApp.getActiveSheet();
+    if (notSafeToEdit(sheet)) {
+        return void(0);
+    }
+    var today = new Date();
+    sheet.getRange(inputDateCell).setValue(new Date(today.setHours(0,0,0,0)));
+}
+// Jump to a row for today
+function jumpToToday() {
+    var row = dayOfYear(new Date());
+    var punchCardSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("登録状況一覧");
+    punchCardSheet.activate();
+    SpreadsheetApp.setActiveRange(punchCardSheet.getRange(row + 2, 1)); //Move activate cell to recent date
 }

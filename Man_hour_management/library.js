@@ -98,6 +98,11 @@ function createValues(length, value) {
     return array;
 }
 
+// whether sheet is input sheet
+function notSafeToEdit(sheet) {
+    return sheet.getName() in notOnEditSheet;
+}
+
 function include(filename) {
     return HtmlService.createHtmlOutputFromFile(filename)
         .setSandboxMode(HtmlService.SandboxMode.IFRAME)
