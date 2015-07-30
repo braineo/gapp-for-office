@@ -86,7 +86,7 @@ function clearContents() {
     });
     // Fill in default date, work time
     sheet.getRange(attendanceInputRange).setValues([
-        [new Date()],
+        [new Date(new Date.setHours(0,0,0,0))],
         ["9:00"],
         ["17:45"],
         ["1:00"],
@@ -100,7 +100,8 @@ function setDateToday() {
     if (notSafeToEdit(sheet)) {
         return void(0);
     }
-    sheet.getRange(inputDateCell).setValue(new Date());
+    var today = new Date();
+    sheet.getRange(inputDateCell).setValue(new Date(today.setHours(0,0,0,0)));
 }
 // Jump to a row for today
 function jumpToToday() {
