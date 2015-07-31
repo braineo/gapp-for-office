@@ -86,7 +86,7 @@ function clearContents() {
     });
     // Fill in default date, work time
     sheet.getRange(attendanceInputRange).setValues([
-        [new Date(new Date.setHours(0,0,0,0))],
+        [new Date((new Date).setHours(0,0,0,0))],
         ["9:00"],
         ["17:45"],
         ["1:00"],
