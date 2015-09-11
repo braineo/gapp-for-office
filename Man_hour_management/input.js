@@ -37,13 +37,13 @@ function insertNewRecords(sourceSheet) {
     for (var i = 0; i < content.length; i++) {
         if (content[i][content[i].length - 1] == "OK") { // Record is Ok to submit flag:
             content[i][content[i].length - 2] = timeStringToFloat(content[i][content[i].length - 2]);
-            databaseSheet.appendRow([userName, inputDate].concat(content[i].slice(0, content[i].length - 1)));
+            databaseSheet.appendRow([userName, inputDate, inputDate.getFullYear(), inputDate.getMonth()+1].concat(content[i].slice(0, content[i].length - 1)));
         }
     }
     // Append items to attendance sheet
     var attendData = sourceSheet.getRange(attendRange).getValues();
     attendData[0][attendData[0].length - 1] = timeStringToFloat(attendData[0][attendData[0].length - 1]);
-    attandenceSheet.appendRow([userName, inputDate].concat(attendData[0]));
+    attandenceSheet.appendRow([userName, inputDate, inputDate.getFullYear(), inputDate.getMonth()+1].concat(attendData[0]));
     SpreadsheetApp.getUi().alert('登録完了');
 }
 
