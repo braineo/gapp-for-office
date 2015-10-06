@@ -5,16 +5,117 @@
     <title>Embedded Hello World</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <!-- <link href="HelloWorld.css" rel="stylesheet" type="text/css"> -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script type="text/javascript" src="jquery.min.js"></script>
-    <script type="text/javascript" src="HelloWorld.js"></script>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-clockpicker.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/formvalidation/0.6.1/css/formValidation.min.css">
 </head>
 
 <body>
-<div class="input_fields_wrap">
-    <button class="add_field_button">Add More Fields</button>
-    <div><input type="text" name="mytext[]"></div>
-</div>
+    <div class="input_fields_wrap">
+        <button class="add_field_button">Add More Fields</button>
+        <div>
+            <input type="text" name="mytext[]">
+        </div>
+    </div>
+    <h1>Pulls from JSON</h1>
+    <div class="container">
+        <div id="wraper" class="col-xs-11">
+            <div class="row">
+                <div class="col-xs-3">
+                    <select id="main0" class="form-control option0">
+                        <option selected value="base">-</option>
+                        <option value="model">モデル検証</option>
+                        <option value="snacks">beverages</option>
+                    </select>
+                </div>
+                <div class="col-xs-3">
+                    <select id="sub0" class="form-control option1">
+                        <option　selected value="base">-</option>
+                    </select>
+                </div>
+                <div class="col-xs-2">
+                    <select id="phase0" class="form-control option2">
+                        <option selected value="base">-</option>
+                    </select>
+                </div>
+                <div class="col-xs-2">
+                    <div class="input-group clockpicker">
+                        <input type="text" class="form-control" value="00:00">
+                        <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+                </div>
+                <div id="delete0" class="col-xs-1 form-group">
+                </div>
+            </div>
+        </div>
+    </div>
+    <form id="actionForm" method="post" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-xs-1 control-label">工数項目</label>
+            <div class="col-xs-3">
+                <select class="form-control" name="item[0].main">
+                </select>
+            </div>
+            <div class="col-xs-3">
+                <select class="form-control" name="item[0].sub">
+                </select>
+            </div>
+            <div class="col-xs-2">
+                <select class="form-control" name="item[0].phase">
+                </select>
+            </div>
+            <div class="col-xs-2">
+                <div class="input-group clockpicker">
+                    <input type="text" class="form-control" value="00:00" name="item[0].time">
+                    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-1">
+                <button type="button" class="btn btn-default addButton"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+        <!-- The template for adding new field -->
+        <div class="form-group hide" id="actionTemplate">
+            <div class="col-xs-3 col-xs-offset-1">
+                <select class="form-control" name="item[0].main">
+                </select>
+            </div>
+            <div class="col-xs-3">
+                <select class="form-control" name="item[0].sub">
+                </select>
+            </div>
+            <div class="col-xs-2">
+                <select class="form-control" name="item[0].phase">
+                </select>
+            </div>
+            <div class="col-xs-2">
+                <div class="input-group clockpicker">
+                    <input type="text" class="form-control" value="00:00" name="item[0].time">
+                    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-1">
+                <button type="button" class="btn btn-default addButton"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-5 col-xs-offset-1">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-clockpicker.min.js"></script>
+    <script scr="https://cdnjs.cloudflare.com/ajax/libs/formvalidation/0.6.1/js/formValidation.min.js"></script>
+    <script type="text/javascript" src="../js/HelloWorld.js"></script>
 </body>
 
 </html>
