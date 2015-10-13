@@ -17,40 +17,15 @@ $(document).ready(function() {
         $(this).parent('div').remove();
         x--;
     });
-
-
-    $('.clockpicker').clockpicker();
-
-    $("#main").change(function() {
-
-        var $dropdown = $(this);
-
-        $.getJSON("../json/data.json", function(data) {
-
-            var key = $dropdown.val();
-            var vals = [];
-
-            switch (key) {
-                case 'beverages':
-                    vals = data.beverages.split(",");
-                    break;
-                case 'model':
-                    vals = data.モデル検証;
-                    break;
-                case 'base':
-                    vals = ['Please choose from above'];
-            }
-
-            var $jsontwo = $("#sub");
-            $jsontwo.empty();
-            $.each(vals, function(index, value) {
-                $jsontwo.append("<option>" + value + "</option>");
-            });
-
-        });
+    // add options to main category dropdown
+    $.getJSON("../json/data.json", function(data) {
+        $.each(data.大カテゴリ, function(index, val) {
+            $("select[name$='main']").append('<option value=' + val + '>' + val + '</option>');
+        })
     });
+
     var mainValidators = {
-            row: '.col-xs-3', // The title is placed inside a <div class="col-xs-4"> element
+            row: '.col-xs-3', // The title is placed inside a <div class="col-xs-3"> element
             validators: {
                 notEmpty: {
                     message: 'The title is required'
@@ -114,7 +89,7 @@ $(document).ready(function() {
                 .clone()
                 .removeClass('hide')
                 .removeAttr('id')
-                .attr('data-book-index', bookIndex)
+                .attr('data-item-index', itemIndex)
                 .insertBefore($template);
 
             // Update the name attributes
@@ -131,25 +106,89 @@ $(document).ready(function() {
                 .formValidation('addField', 'item[' + itemIndex + '].sub', subValidators)
                 .formValidation('addField', 'item[' + itemIndex + '].phase', phaseValidators)
                 .formValidation('addField', 'item[' + itemIndex + '].time', timeValidators);
-        });
+        })
+        // Remove button click handler
+        .on('click', '.removeButton', function() {
+            var $row = $(this).parents('.form-group'),
+                index = $row.attr('data-item-index');
 
+            // Remove fields
+            $('#itemForm')
+                .formValidation('removeField', $row.find('[name="item[' + index + '].main"]'))
+                .formValidation('removeField', $row.find('[name="item[' + index + '].sub"]'))
+                .formValidation('removeField', $row.find('[name="item[' + index + '].phase"]'))
+                .formValidation('removeField', $row.find('[name="item[' + index + '].time"]'));
+
+            // Remove element containing the fields
+            $row.remove();
+        })
+        // add options to sub category according to main catagory
+        .on("change", "select[name$='main']", function() {
+            $selected = $(this);
+            console.log($(this).val())
+            $.getJSON("../json/data.json", function(data) {
+                var prefix = $selected.attr('name').split('.')[0];
+
+                var $sub = $("select[name='" + prefix + ".sub']");
+                var $phase = $("select[name='" + prefix + ".phase']");
+                $sub.empty().append("<option value=''>--小カテゴリ--</option>");
+                $phase.empty().append("<option value=''>--フェーズ--</option>");
+
+                // sub category read from data.json and append to select
+                $.each(data[$selected.val()], function(index, val) {
+                    /* iterate through array or object */
+                    $sub.append('<option value=' + val + '>' + val + '</option>');
+                });
+                if ($selected.val() == 'モデル検証') {
+                    $phase.attr('disabled', false);
+                    $.each(data['フェーズ'], function(index, val) {
+                        /* iterate through array or object */
+                        $phase.append('<option value=' + val + '>' + val + '</option>');
+                    });
+                } else {
+                    $phase.attr('disabled', 'disabled');
+                };
+            });
+        })
+        // code loaded by jQuery need to use delegate
+        .delegate('.clockpicker', 'focusin', function() {
+            $(this).clockpicker();
+        });
+    //$('.clockpicker').clockpicker();
 });
 
-function rowControl() {
-    var row_nums = 1;
-    var wrapper = $(".wrapper"); // row 
-    $(".add-row").on('click', function(e) {
-        row_nums++;
-        var div = $(".row").clone()
-        div.find(".option0").attr("id", function(i, id) {
-            return id.replace(/\d+/, row_nums)
+$('.testButton').click(function postContactToGoogle() {
+    var name = 'test'; //$('#name').val();
+    var email = 'test'; //$('#email').val();
+    var feed = 'test'; //$('#feed').val();
+    if ((name !== "") && (email !== "") && (feed !== "")) {
+        $.ajax({
+            url: "https://docs.google.com/a/g.softbank.co.jp/forms/d/11-1Jq2S79VXPf2sLad47YDYy_jf_wRNCQ66XLGPulaY/formResponse",
+            data: {
+                "entry.1390451542": 'name',
+                "entry.1432710148": 'date',
+                "entry.1886936430": 'year',
+                "entry.57085600" : 'month',
+                "entry.2128219038" : 'main',
+                "entry.1933706906" : 'sub',
+                "entry.195336712" : 'phase',
+                "entry.354474307" : 'hour'
+            },
+            type: "POST",
+            dataType: "xml",
+            statusCode: {
+                0: function() {
+                    //Success message
+                    console.log('good 0');
+                },
+                200: function() {
+                    //Success Message
+                    console.log('good 200');
+                }
+            }
         });
-        div.find(".option1").attr("id", function(i, id) {
-            return id.replace(/\d+/, row_nums)
-        });
-        div.find(".option2").attr("id", function(i, id) {
-            return id.replace(/\d+/, row_nums)
-        });
-        $(".row").append(div)
-    });
-};
+    } else {
+        //Error message
+        console.log('fail');
+    }
+});
