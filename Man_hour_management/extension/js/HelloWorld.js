@@ -28,7 +28,7 @@ $(document).ready(function() {
             row: '.col-xs-3', // The title is placed inside a <div class="col-xs-3"> element
             validators: {
                 notEmpty: {
-                    message: 'The title is required'
+                    message: '大カテゴリを入力して下さい'
                 }
             }
         },
@@ -36,10 +36,7 @@ $(document).ready(function() {
             row: '.col-xs-3',
             validators: {
                 notEmpty: {
-                    message: 'The ISBN is required'
-                },
-                isbn: {
-                    message: 'The ISBN is not valid'
+                    message: '小カテゴリを入力して下さい'
                 }
             }
         },
@@ -47,10 +44,7 @@ $(document).ready(function() {
             row: '.col-xs-2',
             validators: {
                 notEmpty: {
-                    message: 'The price is required'
-                },
-                numeric: {
-                    message: 'The price must be a numeric number'
+                    message: 'フェーズを入力して下さい'
                 }
             }
         },
@@ -58,10 +52,7 @@ $(document).ready(function() {
             row: '.col-xs-2',
             validators: {
                 notEmpty: {
-                    message: 'The price is required'
-                },
-                numeric: {
-                    message: 'The price must be a numeric number'
+                    message: '工数を入力して下さい'
                 }
             }
         },
@@ -146,6 +137,7 @@ $(document).ready(function() {
                         $phase.append('<option value=' + val + '>' + val + '</option>');
                     });
                 } else {
+                    $phase.empty().append('<option value="-">-</option>')
                     $phase.attr('disabled', 'disabled');
                 };
             });
@@ -155,6 +147,9 @@ $(document).ready(function() {
             $(this).clockpicker();
         });
     //$('.clockpicker').clockpicker();
+    $('#startTime').on('keyup paste', function() {
+        $(".InputTxtR[name='StartTime']", top.frames["OPERATION"].document).val($(this).val());
+    });
 });
 
 $('.testButton').click(function postContactToGoogle() {
@@ -165,14 +160,14 @@ $('.testButton').click(function postContactToGoogle() {
         $.ajax({
             url: "https://docs.google.com/a/g.softbank.co.jp/forms/d/11-1Jq2S79VXPf2sLad47YDYy_jf_wRNCQ66XLGPulaY/formResponse",
             data: {
-                "entry.1390451542": 'name',
-                "entry.1432710148": 'date',
-                "entry.1886936430": 'year',
-                "entry.57085600" : 'month',
-                "entry.2128219038" : 'main',
-                "entry.1933706906" : 'sub',
-                "entry.195336712" : 'phase',
-                "entry.354474307" : 'hour'
+                "entry_1390451542": 'name',
+                "entry_1432710148": 'date',
+                "entry_1886936430": 'year',
+                "entry_57085600" : 'month',
+                "entry_2128219038" : 'main',
+                "entry_1933706906" : 'sub',
+                "entry_195336712" : 'phase',
+                "entry_354474307" : 'hour',
             },
             type: "POST",
             dataType: "xml",
