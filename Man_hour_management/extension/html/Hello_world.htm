@@ -9,73 +9,122 @@
     <link href="../css/bootstrap-clockpicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/formvalidation/0.6.1/css/formValidation.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/inputPage.css">
 </head>
 
 <body>
-    <form id="actionForm" method="post" class="form-horizontal">
-        <div class="form-group">
-            <label class="col-xs-1 control-label">工数項目</label>
-            <div class="col-xs-3">
-                <select class="form-control" name="item[0].main">
-                    <option selected value="">--大カテゴリ--</option>
-                </select>
-            </div>
-            <div class="col-xs-3">
-                <select class="form-control" name="item[0].sub">
-                </select>
-            </div>
-            <div class="col-xs-2">
-                <select class="form-control" name="item[0].phase">
-                </select>
-            </div>
-            <div class="col-xs-2">
-                <div class="input-group clockpicker" data-autoclose="true">
-                    <input type="text" class="form-control" value="00:00" name="item[0].time">
-                    <span class="input-group-addon">
-        <span class="glyphicon glyphicon-time"></span>
-                    </span>
+    <div class="container">
+        <div class="page-header">
+            <h1>工数管理Chrome拡張機能</h1>
+        </div>
+        <h4>勤務実績</h4>
+        <form id="timeForm" method="post" class="form-inline">
+            <div class="row">
+                <div class="form-group">
+                    <!-- Changes on startTime will copy to StartTime -->
+                    <label for="startTime">始業時刻</label>
+                    <input type="text" class="form-control" id="startTime" placeholder="0900">
+                </div>
+                <div class="form-group">
+                    <label for="endTime">終業時刻</label>
+                    <input type="text" class="form-control" id="endTime" placeholder="1745">
+                </div>
+                <div class="form-group">
+                    <label for="wolydayDivision">勤務パターン</label>
+                    <select class="form-control" id="workDivision">
+                        <option value="WorkRule_9639">
+                            0D0900:出張</option>
+                        <option value="WorkRule_9640" selected="">
+                            0F0900:フレックス</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="overTime">残業時間</label>
+                    <input type="text" class="form-control" disabled>
                 </div>
             </div>
-            <div class="col-xs-1">
-                <button type="button" class="btn btn-default addButton"><i class="fa fa-plus"></i></button>
-            </div>
-        </div>
-        <!-- The template for adding new field -->
-        <div class="form-group hide" id="actionTemplate">
-            <div class="col-xs-3 col-xs-offset-1">
-                <select class="form-control" name="main">
-                    <option selected value="">--大カテゴリ--</option>
-                </select>
-            </div>
-            <div class="col-xs-3">
-                <select class="form-control" name="sub">
-                </select>
-            </div>
-            <div class="col-xs-2">
-                <select class="form-control" name="phase">
-                </select>
-            </div>
-            <div class="col-xs-2">
-                <div class="input-group clockpicker" data-autoclose="true">
-                    <input type="text" class="form-control" value="00:00" name="time">
-                    <span class="input-group-addon">
-        <span class="glyphicon glyphicon-time"></span>
-                    </span>
+            <div class="row top-buffer">
+                <div class="form-group">
+                    <!-- Changes on startTime will copy to StartTime -->
+                    <label for="holidayDivision">休暇区分</label>
+                    <select class="form-control" id="holidayDivision">
+                            <option value="Holiday_1_Company_1" selected="">
+                            </option>
+                            <option value="Holiday_17">
+                                前半半休</option>
+                            <option value="Holiday_18">
+                                後半半休</option>
+                        </select>
                 </div>
             </div>
-            <div class="col-xs-1">
-                <button type="button" class="btn btn-default removeButton"><i class="fa fa-minus"></i></button>
+        </form>
+        <hr>
+        <h4>工数項目</h4>
+        <form id="actionForm" method="post" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-1 control-label">工数項目</label>
+                <div class="col-sm-2">
+                    <select class="form-control" name="item[0].main">
+                        <option selected value="">--大カテゴリ--</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-control" name="item[0].sub">
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-control" name="item[0].phase">
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group clockpicker" data-autoclose="true">
+                        <input type="text" class="form-control" value="00:00" name="item[0].time">
+                        <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <button type="button" class="btn btn-default addButton"><i class="fa fa-plus"></i></button>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-xs-5 col-xs-offset-1">
-                <button type="submit" class="btn btn-default">Submit</button>
+            <!-- The template for adding new field -->
+            <div class="form-group hide" id="actionTemplate">
+                <div class="col-sm-2 col-sm-offset-1">
+                    <select class="form-control" name="main">
+                        <option selected value="">--大カテゴリ--</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-control" name="sub">
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-control" name="phase">
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group clockpicker" data-autoclose="true">
+                        <input type="text" class="form-control" value="00:00" name="time">
+                        <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <button type="button" class="btn btn-default removeButton"><i class="fa fa-minus"></i></button>
+                </div>
             </div>
-            <div class="col-xs-5">
-                <button type="submit" class="btn btn-default testButton">test</button>
+            <div class="form-group">
+                <div class="col-sm-5 col-sm-offset-1">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+                <div class="col-sm-5">
+                    <button type="submit" class="btn btn-default testButton">test</button>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/bootstrap-clockpicker.min.js"></script>

@@ -148,7 +148,8 @@ $(document).ready(function() {
         });
     //$('.clockpicker').clockpicker();
     $('#startTime').on('keyup paste', function() {
-        $(".InputTxtR[name='StartTime']", top.frames["OPERATION"].document).val($(this).val());
+        // console.log("%s", $(this).val());
+        // $(".InputTxtR[name='StartTime']", top.frames["OPERATION"].document).val($(this).val());
     });
 });
 
