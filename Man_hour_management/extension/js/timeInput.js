@@ -164,11 +164,11 @@ $('.testButton').click(function postContactToGoogle() {
                 "entry_1390451542": 'name',
                 "entry_1432710148": 'date',
                 "entry_1886936430": 'year',
-                "entry_57085600" : 'month',
-                "entry_2128219038" : 'main',
-                "entry_1933706906" : 'sub',
-                "entry_195336712" : 'phase',
-                "entry_354474307" : 'hour',
+                "entry_57085600": 'month',
+                "entry_2128219038": 'main',
+                "entry_1933706906": 'sub',
+                "entry_195336712": 'phase',
+                "entry_354474307": 'hour',
             },
             type: "POST",
             dataType: "xml",
@@ -187,4 +187,27 @@ $('.testButton').click(function postContactToGoogle() {
         //Error message
         console.log('fail');
     }
+});
+
+// Update the relevant fields with the new data
+function setDOMInfo(info) {
+    document.getElementById('total').textContent = info.total;
+    document.getElementById('inputs').textContent = info.inputs;
+    document.getElementById('buttons').textContent = info.buttons;
+}
+
+// $(function() {
+//   // sends message to background script
+//   chrome.runtime.sendMessage({opened: true}, function(response) {
+//     console.log(response.example);
+//   });
+// });
+
+$('.message').click(function sendMessage() {
+    console.log("start to send");
+    chrome.runtime.sendMessage({
+        opened: true
+    }, function(response){
+        console.log(response.example);
+    });
 });

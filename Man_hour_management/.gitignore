@@ -3,8 +3,8 @@
 /extension/css/*
 /extension/json/*
 
-!/extension/js/inject.js
-!/extension/js/HelloWorld.js
+!/extension/js/content.js
+!/extension/js/timeInput.js
 
 *.csv
 *.png
