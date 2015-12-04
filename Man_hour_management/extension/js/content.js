@@ -22,17 +22,27 @@ $(document).ready(function() {
         'name': 'injectPage',
         'src': src
     }));
+
 });
 
+function saveETimeInput() {
+    var startTime = $(".InputTxtR[name='StartTime']", top.frames["OPERATION"].document).val();
+    var endTime = $(".InputTxtR[name='EndTime']", top.frames["OPERATION"].document).val();
+    var workDivision = $(".InputSelect[name='WorkDivision'", top.frames["OPERATION"].document).val();
+    var holidayDivision = $(".InputSelect[name='HolidayDivision'", top.frames["OPERATION"].document).val();
+    chrome.storage.local.set({
+        'startTime': startTime,
+        'endTime': endTime,
+        'workDivision': workDivision,
+        'holidayDivision': holidayDivision
+    });
+    console.log("save vars");
+}
 
 // receives message from background script
 chrome.extension.onMessage.addListener(function(message, sender) {
     console.log("In content_script ");
-    if (message.logUrl) {
-        var time = $(".InputTxtR[name='StartTime']", top.frames["OPERATION"].document).val();
-        console.log(time);
-        chrome.runtime.sendMessage({startTime:time}, function(response){
-            console.log(response.fine);
-        });
+    if (message.get) {
+        saveETimeInput();
     }
 });

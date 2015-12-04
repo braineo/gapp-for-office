@@ -203,11 +203,27 @@ function setDOMInfo(info) {
 //   });
 // });
 
-$('.message').click(function sendMessage() {
-    console.log("start to send");
+$('.message').on('click', sendMessage);
+$(sendMessage).on('done', getAndSetDOM);
+
+function sendMessage() {
     chrome.runtime.sendMessage({
-        opened: true
-    }, function(response){
-        console.log(response.example);
+        sync: true
+    }, function(response) {
+        console.log(response.current);
     });
+    $(this).trigger('done');
+}
+
+function getAndSetDOM(){
+    chrome.storage.local.get(function(data) {
+        console.log(data);
+    });
+}
+
+chrome.storage.onChanged.addListener(function (changes, areaName) {
+    // chrome.storage.local.get(function(data) {
+    //     console.log(data);
+    // });
+    console.log(changes);
 });

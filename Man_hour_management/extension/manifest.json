@@ -8,8 +8,9 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-  "tabs",
+    "tabs",
     "activeTab",
+    "storage",
     "https://ajax.googleapis.com/",
     "https://*.google.com/"
   ],
@@ -17,16 +18,18 @@
     "html/timeInput.htm",
     "js/lib/jquery.min.js"
   ],
-  "content_scripts": [{
-    "matches": [
-      "http://hr.bb.local/Lysithea/JSP_Files/menu/*"
-    ],
-    "js": [
-      "js/lib/jquery.min.js",
-      "js/content.js"
-    ],
-    "run_at": "document_end"
-  }],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://hr.bb.local/Lysithea/JSP_Files/menu/*"
+      ],
+      "js": [
+        "js/lib/jquery.min.js",
+        "js/content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
   "background": {
     "persistent": false,
     "scripts": [
